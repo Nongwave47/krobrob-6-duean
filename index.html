@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ครบรอบ 6 เดือน – Doraemon 🎉</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* -----------------------
+   CSS รวมทั้งหมด
+------------------------*/
+
+/* Reset & font */
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Kanit', sans-serif;
+  background: #e0f7ff url('images/dora-bg.png') repeat;
+  background-size: 150px;
+  color: #03396c;
+}
+
+/* Header */
+header {
+  text-align: center;
+  padding: 50px 20px;
+  background: linear-gradient(135deg, #42a5f5, #81d4fa);
+  color: #fff;
+  border-bottom: 5px solid #0d47a1;
+}
+header h1 { font-size: 3em; margin-bottom:10px; }
+header p { font-size:1.2em; }
+
+/* Progress bar */
+.progress-container {
+  width: 80%;
+  height: 20px;
+  background: rgba(255,255,255,0.3);
+  margin: 20px auto;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: #ffd700;
+  border-radius: 10px;
+  transition: width 2s ease-in-out;
+}
+
+/* ปุ่มไปหน้าถัดไป */
+.next-button-container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.next-button {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffd700, #ffeb3b);
+  color: #0d47a1;
+  padding: 14px 30px;
+  border-radius: 50px;
+  font-size: 1.1em;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+
+.next-button:hover {
+  background: linear-gradient(135deg, #ffeb3b, #ffd700);
+  transform: scale(1.08);
+}
+
+/* Card สำหรับข้อความหวานๆ */
+.card {
+  background: #b3e5fc;
+  border: 3px solid #42a5f5;
+  border-radius: 15px;
+  padding: 25px;
+  max-width: 700px;
+  margin: 40px auto;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  transition: transform 0.3s;
+}
+.card:hover { transform: translateY(-5px); }
+.card h2 {
+  color: #0d47a1;
+  margin-bottom: 15px;
+  text-align: center;
+}
+.card p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* Confetti canvas */
+canvas { position: fixed; top:0; left:0; pointer-events:none; z-index:9999; }
+
+/* รูปโดราเอม่อนมุมล่าง */
+.dora-left, .dora-right {
+  position: fixed;
+  bottom: 0;
+  width: 300px;
+  z-index: 1000;
+}
+.dora-left { left: 0; }
+.dora-right { right: 0; }
+
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ครบรอบ 6 เดือน – Doraemon 🎉</h1>
+  <p>ขอบคุณที่เดินทางมาด้วยกันตลอด 6 เดือน 💖</p>
+
+  <div class="progress-container">
+    <div class="progress-bar"></div>
+  </div>
+</header>
+
+<!-- ✅ ปุ่มอยู่เหนือกล่องข้อความ -->
+<div class="next-button-container">
+  <a href="timeline.html" class="next-button">ไปดูความทรงจำของเรา ➜</a>
+</div>
+
+<section class="card text-card">
+  <h2>6 เดือนแห่งความทรงจำกับหนู</h2>
+  <p>
+    ทุกวันที่มีหนูอยู่ข้าง ๆ โลกของพี่เต็มไปด้วยความสุข
+    เหมือนโดราเอม่อนพาเรามาเจอของวิเศษทุกวัน ✨  
+    พี่อาจไม่สมบูรณ์แบบ แต่พี่สัญญาว่าจะดูแล รักษา และรักหนูให้ดีที่สุดเสมอ 💙
+  </p>
+</section>
+
+<!-- รูปโดราเอม่อนล่างซ้ายและล่างขวา -->
+<img src="doraemon2.png" alt="Doraemon Left" class="dora-left">
+<img src="doraemon3.png" alt="Doraemon Right" class="dora-right">
+
+<canvas id="confetti"></canvas>
+
+<script>
+// Progress bar animation
+const progressBar = document.querySelector('.progress-bar');
+if (progressBar) {
+    setTimeout(() => { progressBar.style.width = '100%'; }, 500);
+}
+
+// Confetti animation
+const canvas = document.getElementById('confetti');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const confettiCount = 150;
+    const confetti = [];
+    const colors = ['#42a5f5','#ffd700','#f44336','#ffffff'];
+
+    function random(min,max){ return Math.random()*(max-min)+min; }
+
+    for(let i=0;i<confettiCount;i++){
+      confetti.push({
+        x: random(0,canvas.width),
+        y: random(0,canvas.height),
+        r: random(5,15),
+        d: random(1,10),
+        color: colors[Math.floor(random(0,colors.length))],
+        tilt: random(-10,10),
+        tiltAngleIncrement: random(0.05,0.12),
+        tiltAngle:0
+      });
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      confetti.forEach(c=>{
+        ctx.beginPath();
+        ctx.lineWidth = c.r/2;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r/4, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r/4);
+        ctx.stroke();
+      });
+      update();
+      requestAnimationFrame(draw);
+    }
+
+    function update(){
+      confetti.forEach(c=>{
+        c.tiltAngle += c.tiltAngleIncrement;
+        c.y += (Math.cos(c.d)+1+c.r/2)/2;
+        c.tilt = Math.sin(c.tiltAngle)*15;
+        if(c.y > canvas.height){
+          c.y = -10;
+          c.x = random(0,canvas.width);
+        }
+      });
+    }
+
+    draw();
+
+    window.addEventListener('resize', ()=>{
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+}
+</script>
+
+</body>
+</html>
