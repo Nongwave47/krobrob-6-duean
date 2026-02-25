@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline ความรัก 6 เดือน 💙</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body{
+  font-family:'Kanit',sans-serif;
+  background:#e0f7ff url('images/dora-bg.png') repeat;
+  background-size:150px;
+  color:#03396c;
+}
+
+/* Header */
+header{
+  text-align:center;
+  padding:50px 20px;
+  background:linear-gradient(135deg, #42a5f5, #81d4fa);
+  color:#fff;
+  border-bottom:5px solid #0d47a1;
+}
+header h1{ font-size:2.5em; margin-bottom:10px; }
+
+/* Timeline line */
+.timeline{
+  position:relative;
+  max-width:900px;
+  margin:50px auto;
+  padding:0 20px;
+}
+.timeline::after{
+  content:'';
+  position:absolute;
+  width:6px;
+  background:#0288d1;
+  top:0; bottom:0;
+  left:50%;
+  margin-left:-3px;
+}
+
+/* Card container */
+.container{
+  position:relative;
+  width:50%;
+  padding:20px 40px;
+  opacity:0;
+  transform:translateY(40px);
+  transition:1s ease;
+}
+.container.show{
+  opacity:1;
+  transform:translateY(0);
+}
+.container.left{ left:0; }
+.container.right{ left:50%; }
+
+/* Timeline card */
+.card{
+  background:#b3e5fc;
+  border:3px solid #42a5f5;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+  position:relative;
+  transition: transform 0.3s;
+}
+.card:hover{ transform:translateY(-5px); }
+.card h2{
+  color:#0d47a1;
+  text-align:center;
+  margin-bottom:15px;
+}
+.card p{
+  font-size:1.05em;
+  line-height:1.7;
+  text-align:center;
+}
+
+/* Circles on timeline */
+.container::after{
+  content:'💙';
+  position:absolute;
+  width:40px; height:40px;
+  top:20px;
+  background:#29b6f6;
+  border:4px solid #fff;
+  border-radius:50%;
+  text-align:center;
+  line-height:32px;
+  font-size:18px;
+  z-index:1;
+}
+.container.right::after{ left:-20px; }
+.container.left::after{ right:-20px; }
+
+/* Buttons */
+.button{
+  display:inline-block;
+  background:linear-gradient(135deg,#ffd700,#ffeb3b);
+  color:#0d47a1;
+  padding:12px 28px;
+  border-radius:50px;
+  font-weight:700;
+  text-decoration:none;
+  box-shadow:0 6px 15px rgba(0,0,0,0.2);
+  transition:0.3s;
+}
+.button:hover{ transform:scale(1.08); }
+
+/* Bottom button */
+.bottom-btn {
+  text-align: center;
+  margin: 50px 0;
+  display: flex;
+  justify-content: center;
+  gap: 50px; /* ระยะห่างระหว่างปุ่ม */
+  flex-wrap: wrap; /* ปรับให้มือถือเลื่อนลงเป็นบรรทัดใหม่ได้ */
+}
+
+/* Doraemon corners */
+.dora-left, .dora-right{
+  position:fixed;
+  width:18vw; max-width:220px; min-width:100px; height:auto; z-index:1000;
+}
+.dora-left{ left:0; bottom:0; }
+.dora-right{ right:0; bottom:0; }
+
+/* Confetti */
+canvas{ position:fixed; top:0; left:0; pointer-events:none; z-index:9999; }
+
+/* Responsive */
+@media(max-width:768px){
+  .container{ width:100%; padding-left:70px; padding-right:25px; }
+  .container.right{ left:0; }
+  .container::after{ left:15px; }
+  .card p{ font-size:0.95em; }
+  header h1{ font-size:1.8em; }
+}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Timeline ความรัก 6 เดือน 💙</h1>
+</header>
+
+<div class="timeline">
+
+<!-- เดือน 1 -->
+<div class="container left">
+<div class="card">
+<h2>เดือนที่ 1 – จุดเริ่มต้น</h2>
+<p>
+เดือนแรกที่เราเริ่มคุยกัน ทุกข้อความ ทุกรอยยิ้ม มันทำให้พี่รู้สึกว่าชีวิตมีใครบางคนเติมเต็ม
+จากความสนุกเล็ก ๆ มันกลายเป็นความรู้สึกที่พี่ไม่อยากให้จางหาย
+</p>
+</div>
+</div>
+
+<!-- เดือน 2 -->
+<div class="container right">
+<div class="card">
+<h2>เดือนที่ 2 – เริ่มผูกพัน</h2>
+<p>
+เราหัวเราะด้วยกันมากขึ้น รู้สึกว่าเวลาไม่ได้คุยกันมันขาดอะไรไป
+ความสัมพันธ์เริ่มชัดเจนขึ้นว่าเราต้องการอีกฝ่ายจริง ๆ
+</p>
+</div>
+</div>
+
+<!-- เดือน 3 -->
+<div class="container left">
+<div class="card">
+<h2>เดือนที่ 3 – ผ่านช่วงงอแง</h2>
+<p>
+เรารู้จักกันมากขึ้น ผ่านความงอแงและความไม่เข้าใจ
+มันทำให้มั่นใจว่าความรักของเราทั้งสองเลือกที่จะรักษาและเข้าใจกัน
+</p>
+</div>
+</div>
+
+<!-- เดือน 4 -->
+<div class="container right">
+<div class="card">
+<h2>เดือนที่ 4 – ความทรงจำพิเศษ</h2>
+<p>
+เสียงหัวเราะ รอยยิ้มเวลางอน ทุกโมเมนต์คือภาพจำที่อบอุ่น
+พี่หวังว่าในทุกภาพข้างหน้า จะมีเธออยู่ข้าง ๆ แบบนี้เสมอ
+</p>
+</div>
+</div>
+
+<!-- เดือน 5 -->
+<div class="container left">
+<div class="card">
+<h2>เดือนที่ 5 – คิดถึงมากขึ้น</h2>
+<p>
+ความคิดถึงชัดเจนขึ้นทุกวัน แค่ไม่ได้คุยไม่กี่ชั่วโมงก็คิดถึงแล้ว
+คนที่พี่ห่วงมากที่สุดก็คือหนู 💙
+</p>
+</div>
+</div>
+
+<!-- เดือน 6 -->
+<div class="container right">
+<div class="card">
+<h2>เดือนที่ 6 – วันนี้และต่อจากนี้</h2>
+<p>
+6 เดือนที่ผ่านมาเต็มไปด้วยความรู้สึกมากมาย
+ขอบคุณที่หนูเข้ามาในชีวิต
+นี่ไม่ใช่แค่ 6 เดือน แต่มันคือจุดเริ่มต้นของเรื่องราวอีกยาวนาน 💖
+</p>
+</div>
+</div>
+
+</div>
+
+<div class="bottom-btn">
+<a href="index.html" class="button">💙 ย้อนกลับหน้าแรก</a>
+<a href="Next.html" class="button"> หน้าถัดไป 💙</a>
+</div>
+
+<img src="doraemon4.png" class="dora-left">
+<img src="doraemon5.png" class="dora-right">
+
+<canvas id="confetti"></canvas>
+
+<script>
+// Fade-in timeline
+const containers=document.querySelectorAll('.container');
+window.addEventListener('scroll',()=>{
+  containers.forEach(c=>{
+    const top=c.getBoundingClientRect().top;
+    if(top<window.innerHeight-100){ c.classList.add('show'); }
+  });
+});
+
+// Confetti animation
+const canvas = document.getElementById('confetti');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const confettiCount = 120;
+const confetti = [];
+const colors = ['#42a5f5','#ffd700','#f44336','#ffffff'];
+
+function random(min,max){ return Math.random()*(max-min)+min; }
+
+for(let i=0;i<confettiCount;i++){
+  confetti.push({
+    x: random(0,canvas.width),
+    y: random(0,canvas.height),
+    r: random(5,15),
+    d: random(1,10),
+    color: colors[Math.floor(random(0,colors.length))],
+    tilt: random(-10,10),
+    tiltAngleIncrement: random(0.05,0.12),
+    tiltAngle:0
+  });
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(c=>{
+    ctx.beginPath();
+    ctx.lineWidth = c.r/2;
+    ctx.strokeStyle = c.color;
+    ctx.moveTo(c.x+c.tilt+c.r/4,c.y);
+    ctx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/4);
+    ctx.stroke();
+  });
+  update();
+  requestAnimationFrame(draw);
+}
+
+function update(){
+  confetti.forEach(c=>{
+    c.tiltAngle+=c.tiltAngleIncrement;
+    c.y+=(Math.cos(c.d)+1+c.r/2)/2;
+    c.tilt=Math.sin(c.tiltAngle)*15;
+    if(c.y>canvas.height){
+      c.y=-10;
+      c.x=random(0,canvas.width);
+    }
+  });
+}
+
+draw();
+
+window.addEventListener('resize',()=>{
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
