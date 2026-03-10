@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz ความรักของเรา 💙</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Kanit',sans-serif;
+  background:#e0f7ff url('images/dora-bg.png') repeat;
+  background-size:150px;
+  color:#03396c;
+  min-height:100vh;
+  overflow:hidden;
+}
+
+/* Header */
+header{
+  text-align:center;
+  padding:40px 20px;
+  background:linear-gradient(135deg,#42a5f5,#81d4fa);
+  color:white;
+  border-bottom:5px solid #0d47a1;
+}
+header h1{font-size:2.5em;margin-bottom:10px;}
+header p{font-size:1.1em;opacity:0.9;}
+
+/* Quiz Container */
+#quizContainer{
+  max-width:700px;
+  margin:40px auto;
+  background:rgba(255,255,255,0.9);
+  border:3px solid #42a5f5;
+  border-radius:15px;
+  padding:30px 20px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.1);
+  text-align:center;
+  opacity:0;
+  transform:translateY(-50px);
+  animation: slideDown 0.7s forwards;
+}
+
+/* Slide down animation */
+@keyframes slideDown{
+  to {opacity:1; transform:translateY(0);}
+}
+
+/* Question */
+.question{font-size:1.3em;margin-bottom:20px;}
+.progress-text{margin-bottom:10px;font-weight:700;}
+
+/* Options */
+.options{display:flex;flex-direction:column;gap:15px;}
+.option{
+  background:linear-gradient(135deg,#ffd700,#ffeb3b);
+  color:#0d47a1;
+  padding:12px 20px;
+  border-radius:50px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.25s;
+}
+.option:hover{transform:scale(1.05);}
+
+/* Feedback */
+.feedback{margin-top:15px;font-size:1.2em;font-weight:bold;}
+
+/* Buttons */
+.bottomBtns{margin-top:25px;text-align:center;}
+.bottomBtns a{
+  display:inline-block;
+  margin-top:10px;
+  background:#90caf9;
+  padding:12px 25px;
+  border-radius:40px;
+  font-weight:700;
+  text-decoration:none;
+  color:#0d47a1;
+}
+
+/* Result Buttons */
+.resultBtns{margin-top:25px;display:flex;gap:15px;justify-content:center;flex-wrap:wrap;}
+
+/* Doraemon corners */
+.dora-left,.dora-right{
+  position:fixed;
+  width:18vw; max-width:220px; min-width:100px;
+  height:auto;
+  z-index:1000;
+}
+.dora-left{left:0; bottom:0;}
+.dora-right{right:0; bottom:0;}
+
+/* Floating hearts */
+.heart{
+  position:absolute;
+  width:15px;
+  height:15px;
+  background:#fff;
+  transform:rotate(45deg);
+  bottom:-40px;
+  animation:floatUp 6s linear infinite;
+  opacity:0.8;
+}
+.heart:before,.heart:after{
+  content:"";
+  position:absolute;
+  width:15px; height:15px;
+  background:#fff;
+  border-radius:50%;
+}
+.heart:before{top:-8px;left:0;}
+.heart:after{left:8px;top:0;}
+@keyframes floatUp{
+0%{transform:translateY(0) rotate(45deg);opacity:0.8}
+100%{transform:translateY(-700px) rotate(45deg);opacity:0}
+}
+
+/* Confetti canvas */
+canvas{position:fixed;top:0;left:0;pointer-events:none;z-index:9999;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>Quiz ความรักของเรา 💙</h1>
+<p>ลองตอบคำถามดูสิ ว่าคุณรู้จักกันดีแค่ไหน 😍</p>
+</header>
+
+<div id="quizContainer"></div>
+
+<div class="bottomBtns">
+<a href="minigame.html">⬅️ กลับหน้าก่อน</a>
+</div>
+
+<img src="doraemon12.png" class="dora-left">
+<img src="doraemon13.png" class="dora-right">
+
+<canvas id="confetti"></canvas>
+
+<script>
+/* ================= QUIZ DATA ================= */
+const quizData = [
+  // หมวดที่ 1: จุดเริ่มต้นและความทรงจำ (1-12)
+  { q: "เราคุยกันครั้งแรกผ่านช่องทางไหน?", options: ["Facebook", "Line", "Instagram", "Litmatch"], answer: "Litmatch" },
+  { q: "ใครเป็นคนทักไปก่อนในวันแรก?", options: ["พี่ทักก่อน", "หนูทักก่อน", "กดใจทิ้งไว้จนเขาทักมา", "บังเอิญพร้อมกัน"], answer: "พี่ทักก่อน" },
+  { q: "พี่เริ่มเรียกหนูว่า 'หนู' ครั้งแรกตอนไหน?", options: ["วันแรกที่คุย", "ตอนเริ่มคอลกัน", "หลังจากเป็นแฟนกัน", "จำไม่ได้ แต่มันเป็นไปเอง"], answer: "วันแรกที่คุย" },
+  { q: "ช่วงเวลาที่เราคอลหากันบ่อยที่สุดคือตอนไหน?", options: ["ตอนเช้าหลังตื่น", "ตอนพักเที่ยง", "ก่อนนอนยันเช้า", "คอลทิ้งไว้ทั้งวัน"], answer: "ก่อนนอนยันเช้า" },
+  { q: "แอปฯ ไหนที่เราใช้คุยกันบ่อยที่สุดในปัจจุบัน?", options: ["Discord", "TikTok", "YouTube", "Instagram"], answer: "Instagram" },
+  { q: "จำได้มั้ยว่าเราคุยกันนานแค่ไหนถึงย้ายมาคุยใน IG?", options: ["วันเดียวก็ย้ายเลย", "แป๊ปเดียวเองงง", "คุยตั้งนานกว่าจะยอมให้", "เดือนนึงพอดี"], answer: "แป๊ปเดียวเองงง" },
+  { q: "รูปโปรไฟล์แรกของพี่ที่หนูเห็นใน Litmatch เป็นแนวไหน?", options: ["รูปหน้าชัดๆ", "รปิดหน้า", "รูปการ์ตูน", "รูปวิว"], answer: "ปิดหน้า" },
+  { q: "ใครเป็นคนบอกรักก่อน?", options: ["พี่บอกก่อน", "หนูบอกก่อน", "บอกพร้อมกัน", "หลุดพูดตอนคอล"], answer: "พี่บอกก่อน" },
+  { q: "วันที่ตกลงเป็นแฟนกันคือวันที่เท่าไหร่?", options: ["ระบุวันที่จริง", "จำไม่ได้", "วันครบรอบไง", "วันที่มีความสุขที่สุด"], answer: "ระบุวันที่จริง" },
+  { q: "ความรู้สึกแรกที่หนูเห็นหน้าพี่ในกล้องคือ?", options: ["เขินจนทำตัวไม่ถูก", "ตกใจหน้าพี่", "เฉยๆ นะ", "พี่หล่อกว่าที่คิด"], answer: "เขินจนทำตัวไม่ถูก" },
+  { q: "พี่ทักหนูด้วยคำว่าอะไรเป็นคำแรกของวันบ่อยที่สุด?", options: ["มอนิ่งคั้บบบบบ", "ตื่นยังเอ่ย", "คิดถึงจัง", "หิวข้าวแล้ว"], answer: "มอนิ่งคั้บบบบบ" },
+  { q: "สิ่งแรกที่พี่ชมหนูตอนคุยกันใหม่ๆ คือเรื่องอะไร?", options: ["หนูน่ารัก", "หนูคุยเก่ง", "หนูใจดี", "หนูเสียงหวาน"], answer: "หนูน่ารัก" },
+
+  // หมวดที่ 2: นิสัยและความกวน (13-24)
+  { q: "นิสัยในแชทที่หนูว่า 'กวน' ที่สุดของพี่คือ?", options: ["ชอบตอบช้า", "ชอบส่งรูปหน้าตลกๆ", "ชอบพิมพ์ผิดบ่อยๆ", "ห๊ะ อะไรนะ"], answer: "ห๊ะ อะไรนะ" },
+  { q: "เวลาพี่หายไปนานๆ หนูมักจะคิดว่าพี่ทำอะไรอยู่?", options: ["แอบไปหลับ", "ตั้งใจทำงาน", "เล่นเกมเพลิน", "แอบหนีเที่ยว"], answer: "แอบไปหลับ" },
+  { q: "ใครขี้งอนมากกว่ากัน?", options: ["พี่แน่นอน", "หนูแหละ", "งอนพอกัน", "ไม่มีใครเคยงอน"], answer: "หนูแหละ" },
+  { q: "เวลาพี่พิมพ์ผิดเยอะๆ หนูชอบทำยังไง?", options: ["ช่วยแก้ให้", "แคปไว้ล้อ", "พิมพ์ผิดกลับ", "มองข้ามไป"], answer: "แคปไว้ล้อ" },
+  { q: "ถ้าพี่สามารถกลายร่างเป็นสัตว์ได้ 1 วัน หนูว่าพี่จะเป็นตัวอะไรมาป่วนหนู?", options: ["ยุง (คอยตามตื้อตามกัด)", "ลิง (ซนและกวนประสาท)", "สล็อธ (กว่าจะทำอะไรได้แต่ละอย่าง)", "แมว (หยิ่งแต่ก็รักนะ)"], answer: "ลิง (ซนและกวนประสาท)" }, 
+  { q: "ท่าทางตอนพึ่งตื่นของใครที่ดูไม่ได้ที่สุด?", options: ["พี่สิ เพราะตื่นมาเจอแต่เพดาน", "หนูเองแหละ", "พอดูได้ทั้งคู่", "น่ารักทั้งคู่"], answer: "พี่สิ เพราะตื่นมาเจอแต่เพดาน" },
+  { q: "เวลาหนูอ้อนพี่ พี่ชอบทำหน้ายังไง?", options: ["เขินจนไปไม่เป็น", "แกล้งเมินใส่", "อ้อนกลับให้หนักกว่า", "แคปหน้าจอไว้"], answer: "เขินจนไปไม่เป็น" },
+  { q: "พี่เคยแอบแคปรูปหลุดหนูตอนคอลกี่รูป?", options: ["ไม่กี่รูปหรอก", "เป็นร้อย เต็มเครื่อง!", "ไม่เคยเลย", "แคปเฉพาะตอนสวย"], answer: "เป็นร้อย เต็มเครื่อง!" },
+  { q: "เวลาหนูทำตัวแสบๆ หรือกวนประสาท พี่ชอบด่าหนูด้วยคำว่าอะไร?", options: ["ไอ้ตูดหมึก", "ยัยตัวแสบ", "ไอ้เด็กดื้อ", "หนู!!!!"], answer: "หนู!!!!" },
+  { q: "เวลาพี่ง้อหนู วิธีไหนที่หนูยอมใจอ่อนเร็วที่สุด?", options: ["เรียก หนูคะ นุ่มๆ", "ส่งสติกเกอร์อ้อน", "ร้องเพลงให้ฟัง", "โอนเงินเข้าบัญชี"], answer: "โอนเงินเข้าบัญชี" },
+  { q: "ใครขี้เกียจอาบน้ำมากกว่ากันตอนคอลอยู่?", options: ["พี่ชัวร์", "หนูเอง", "ผลัดกันขี้เกียจ", "อาบตรงเวลาทั้งคู่"], answer: "พี่ชัวร์" },
+  { q: "ฟิลเตอร์ไอจีไหนที่พี่ใช้แล้วหนูว่า 'หล่อธรรมชาติ'?", options: ["ฟิลเตอร์หน้าตลก", "ฟิลเตอร์ขาวดำ", "ฟิลเตอร์หน้าใส", "ไม่ใช้เลยดีที่สุด"], answer: "ไม่ใช้เลยดีที่สุด" },
+
+  // หมวดที่ 3: ไลฟ์สไตล์และความชอบ (25-36)
+  { q: "พี่ชอบฟังเพลงแนวไหนมากที่สุด?", options: ["เพลงรักหวานๆ", "เพลงเศร้าๆ อกหัก", "เพลงกวนๆ", "เพลงแร็พ"], answer: "เพลงเศร้าๆ อกหัก" },
+  { q: "เมนูมื้อแรกที่เราต้องไปกินด้วยกันคือ?", options: ["ชาบู/หมูกระทะ", "สเต็ก", "ส้มตำ", "ของหวาน"], answer: "ชาบู/หมูกระทะ" },
+  { q: "พี่ชอบใส่เสื้อสีอะไรมากที่สุด?", options: ["ขาว", "ดำ", "ฟ้า", "ชมพู"], answer: "ดำ" },
+  { q: "เวลาดู TikTok ด้วยกัน หนูชอบดูแนวไหน?", options: ["สัตว์เลี้ยง", "อาหาร", "ตลก", "เต้น"], answer: "อาหาร" },
+  { q: "พี่ทำงานกราฟิกส่วนใหญ่ในโปรแกรมไหน?", options: ["Photoshop", "Canva", "Illustrator", "CapCut"], answer: "Canva" },
+  { q: "พี่ชอบดูฟุตบอลทีมอะไร (หรือลีกไหน)?", options: ["พรีเมียร์ลีก", "ลาลีกา", "ไทยลีก", "บุนเดสลีกา"], answer: "พรีเมียร์ลีก" },
+  { q: "เครื่องดื่มที่พี่สั่งบ่อยที่สุดคือ?", options: ["กาแฟ", "ชาเย็น", "น้ำเปล่า", "น้ำอัดลม"], answer: "ชาเย็น" },
+  { q: "พี่ชอบอากาศแบบไหน?", options: ["ร้อน", "หนาว", "ฝนตก", "เย็นสบาย"], answer: "เย็นสบาย" },
+  { q: "งานอดิเรกที่พี่ทำแล้วมีความสุขที่สุดคือ?", options: ["เล่นเกม", "ทำงาน", "คอลกับหนู", "นอน"], answer: "คอลกับหนู" },
+  { q: "ถ้าพี่ส่ง Grab Food ไปเซอร์ไพรส์ หนูอยากได้อะไร?", options: ["ชานมไข่มุก", "ไก่ทอด", "ขนมหวาน", "ไม่ต้องส่งของ ส่งตัวพี่มา"], answer: "ไม่ต้องส่งของ ส่งตัวพี่มา" },
+  { q: "พี่ชอบใช้เคสมือถือสีอะไร?", options: ["ใส", "ดำ", "ตามใจหนู", "ไม่ใส่เคส"], answer: "ใส" },
+  { q: "เกมที่พี่ชอบเล่นมากที่สุดคือเกมแนวไหน?", options: ["MOBA (RoV)", "FPS (ยิงปืน)", "ปลูกผัก", "ฟุตบอล"], answer: "MOBA (RoV)" },
+
+  // หมวดที่ 4: ความรู้สึกเชิงลึก (37-48)
+  { q: "ประโยคบอกฝันดีที่หนูชอบที่สุดคือ?", options: ["ฝันดีน๊าาา", "รักหนูนะคะ", "เจอกันในฝัน", "ตื่นมาคุยกันต่อนะ"], answer: "ฝันดีน๊าาา" },
+  { q: "เวลาหนูเหนื่อย พี่มักจะพูดว่าอะไรให้หายเหนื่อย?", options: ["สู้ๆ น๊าาา", "มาให้กอดทิพย์หน่อย", "เดี๋ยวซื้อขนมให้", "โอ๋ๆ นะคะ"], answer: "สู้ๆ น๊าาา" },
+  { q: "อะไรคือสิ่งที่ทำให้เราคบกันมาได้ถึง 6 เดือน?", options: ["ความไว้ใจ", "ความสม่ำเสมอ", "คุยกันรู้เรื่อง", "ถูกทุกข้อ!"], answer: "ถูกทุกข้อ!" },
+  { q: "ของขวัญที่พี่ส่งให้ (หรืออยากส่ง) ที่แทนตัวพี่ที่สุด?", options: ["ตุ๊กตา", "เสื้อยืด", "ของกิน", "จดหมาย"], answer: "ตุ๊กตา" },
+  { q: "พี่เคยทำให้หนูซึ้งจนน้ำตาซึมบ้างมั้ย?", options: ["บ่อยไป", "ไม่เคย", "ครั้งเดียวตอนบอกรัก", "จำไม่ได้"], answer: "บ่อยไป" },
+  { q: "หนูชอบตอนพี่เรียกหนูว่าอะไรหรออออ", options: ["หนูคะ", "หนูค๊าบบบบ", "เรียกชื่อเฉยๆ", "ยัยน้อง"], answer: "หนูค๊าบบบบ" },
+  { q: "สิ่งที่หนูชอบที่สุดเวลาคอลกันคือ?", options: ["เห็นหน้าพี่ชัดๆ", "เห็นพี่ตอนพึ่งตื่น", "เห็นพี่งอแง", "เห็นพี่ตั้งใจทำงาน"], answer: "เห็นพี่ตั้งใจทำงาน" },
+  { q: "ความรู้สึกพี่ในเดือนที่ 6 ต่างจากเดือนแรกยังไง?", options: ["รักเท่าเดิม", "รักมากขึ้นทุกวัน", "อยากแกล้งมากขึ้น", "อยากเจอตัวจริงที่สุด"], answer: "รักมากขึ้นทุกวัน" },
+  { q: "สิ่งที่พี่ 'กลัว' ที่สุดในความสัมพันธ์นี้คือ?", options: ["กลัวหนูหายไป", "กลัวเน็ตหลุด", "กลัวหนูโกรธ", "กลัวตัวเองหลับใส่หนู"], answer: "กลัวหนูหายไป" },
+  { q: "ตลอด 6 เดือน พี่เคยโกหกหนูเรื่องอะไรมั้ย?", options: ["ไม่เคยเลย", "เคยเรื่องเล็กๆ", "แกล้งอำเฉยๆ", "จำไม่ได้"], answer: "ไม่เคยเลย" },
+  { q: "หนูให้คะแนนความใส่ใจของพี่เท่าไหร่?", options: ["5/10", "8/10", "10/10", "ทะลุหลอดไปเลย"], answer: "ทะลุหลอดไปเลย" },
+  { q: "เวลาเรามีปัญหา ใครมักจะเป็นคนยอมก่อน?", options: ["พี่", "หนู", "สลับกัน", "ไม่มีใครยอม"], answer: "พี่" },
+
+  // หมวดที่ 5: อนาคตและการเจอตัวจริง (49-60)
+  { q: "ถ้าได้เจอตัวจริงครั้งแรก สิ่งแรกที่พี่จะทำคือ?", options: ["กอดแน่นๆ", "ยืนเขิน", "จูงมือไปกิน", "แอบมองหน้าใกล้ๆ"], answer: "กอดแน่นๆ" },
+  { q: "จังหวัดแรกที่เราสัญญากันว่าจะไปคือที่ไหน?", options: ["ทะเล", "ภูเขา", "เชียงใหม่", "ที่ไหนก็ได้ที่มีหนู"], answer: "ที่ไหนก็ได้ที่มีหนู" },
+  { q: "มื้อแรกที่เจอกัน ใครจะเป็นคนเลี้ยง?", options: ["พี่เลี้ยงเอง", "หนูเลี้ยงพี่", "หารครึ่ง", "กินฟรี (หนี)"], answer: "พี่เลี้ยงเอง" },
+  { q: "ถ้าพี่ไปหาหนูพรุ่งนี้เลย หนูจะรู้สึกยังไง?", options: ["ตื่นเต้นจนนอนไม่หลับ", "รีบทำความสะอาดห้อง", "หาชุดสวยๆ", "คิดว่าพี่อำ"], answer: "ตื่นเต้นจนนอนไม่หลับ" },
+  { q: "ความฝันสูงสุดของเราในตอนนี้คืออะไร?", options: ["ได้เจอหน้ากันจริงๆ", "ไปเที่ยวด้วยกัน", "อยู่ด้วยกันตลอดไป", "มีแมวด้วยกัน"], answer: "อยู่ด้วยกันตลอดไป" },
+  { q: "ถ้าพี่โอนเงินให้ หนูจะตอบภายในกี่วินาที?", options: ["0.01 วินาที", "แกล้งปฏิเสธ", "ขอเลขบัญชีเลย", "รอก่อน"], answer: "0.01 วินาที" },
+  { q: "ถ้าเรามีประตูวิเศษทะลุไปหาได้ 5 นาที หนูอยากทำอะไร?", options: ["กอดให้หายคิดถึง", "บีบแก้มพี่", "ตีแขนพี่", "พิงไหล่เงียบๆ"], answer: "กอดให้หายคิดถึง" },
+  { q: "อยากพี่เรียกหนูว่า 'หนู' ไปจนแก่เลยมั้ย?", options: ["แน่นอน", "เปลี่ยนตามอารมณ์", "ให้หนูเลือก", "แก่แล้วค่อยว่ากัน"], answer: "แน่นอน" },
+  { q: "ก้าวต่อไปในเดือนที่ 7 พี่อยากให้เราเป็นยังไง?", options: ["รักกันมากขึ้น", "เข้าใจกันมากขึ้น", "ได้เจอหน้ากันสักที", "ถูกทุกข้อ!"], answer: "ถูกทุกข้อ!" },
+  { q: "อยากให้ทำอาหารอะไรให้หนูทานที่สุด?", options: ["ไข่เจียวฝีมือพี่", "มาม่า", "อาหารคลีน", "สั่งแกร็บเถอะ"], answer: "ไข่เจียวฝีมือพี่" },
+  { q: "ถ้าเจอหน้ากันแล้วพี่เขินจนพูดไม่ออก หนูจะทำยังไง?", options: ["ชวนพี่คุยเอง", "เขินตาม", "ล้อพี่รัวๆ", "แอบขำเงียบๆ"], answer: "ชวนพี่คุยเอง" },
+  { q: "สุดท้ายแล้ว 6 เดือนที่ผ่านมา คิดว่าพี่อยากบอกอะไรหนูที่สุด?", options: ["ขอบคุณที่ไม่ไปไหน", "รักหนูมากขึ้นทุกวัน", "จะรีบไปหาให้ได้", "รักหนูที่สุดในโลก"], answer: "รักหนูที่สุดในโลก" }
+];
+
+/* ================= QUIZ SYSTEM ================= */
+let current=0;
+let score=0;
+const container=document.getElementById("quizContainer");
+
+function showQuestion(index){
+  const q=quizData[index];
+  container.innerHTML=`
+  <div class="progress-text">ข้อที่ ${index+1} / ${quizData.length}</div>
+  <div class="question">${q.q}</div>
+  <div class="options">
+    ${q.options.map((opt,i)=>`<div class="option" data-index="${i}">${opt}</div>`).join("")}
+  </div>
+  <div class="feedback" id="feedback"></div>
+  `;
+  
+  const optionElems=container.querySelectorAll(".option");
+  const feedback=document.getElementById("feedback");
+  let clicked=false; // ป้องกันคลิกซ้ำ
+  optionElems.forEach(opt=>{
+    opt.addEventListener("click",()=>{
+      if(clicked) return;
+      clicked=true;
+      const selected=parseInt(opt.dataset.index);
+      if(q.options[selected]===q.answer){
+        feedback.innerText="✅ ถูกต้อง!";
+        score++;
+      }else{
+        feedback.innerText="❌ ไม่ถูกต้อง";
+      }
+      setTimeout(()=>{
+        clicked=false;
+        current++;
+        if(current<quizData.length){
+          showQuestion(current);
+        } else {
+          showResult();
+        }
+      },800);
+    });
+  });
+}
+
+/* ================= RESULT ================= */
+function showResult(){
+  container.innerHTML=`
+  <div style="background:white;padding:40px;border-radius:15px;border:3px solid #42a5f5;">
+    <h2 style="font-size:2em;margin-bottom:20px;">🎉 จบแล้ว! 🎉</h2>
+    <div style="font-size:2em;font-weight:bold;margin-bottom:20px;color:#0d47a1;">
+      คุณตอบถูก ${score} / ${quizData.length} ข้อ 💖
+    </div>
+    <div class="resultBtns">
+      <div class="option" onclick="restartQuiz()" style="background:#66bb6a;">🔄 ทำอีกครั้ง</div>
+      <a href="nextpage.html" class="option" style="text-decoration:none;">➡️ หน้าถัดไป</a>
+    </div>
+  </div>
+  `;
+}
+
+/* ================= RESTART ================= */
+function restartQuiz(){
+  current=0; score=0; showQuestion(current);
+}
+
+/* ================= START ================= */
+showQuestion(current);
+
+/* ================= Hearts ================= */
+function createHeart(){
+  const heart=document.createElement('div');
+  heart.classList.add('heart');
+  heart.style.left=Math.random()*100+'vw';
+  heart.style.width=heart.style.height=(10+Math.random()*15)+'px';
+  heart.style.animationDuration=(4+Math.random()*4)+'s';
+  document.body.appendChild(heart);
+  setTimeout(()=>heart.remove(),5000);
+}
+setInterval(createHeart,400);
+
+/* ================= Confetti ================= */
+const canvas=document.getElementById('confetti');
+const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+const confettiCount=120;
+const confetti=[];
+const colors=['#42a5f5','#ffd700','#f44336','#ffffff'];
+
+function random(min,max){ return Math.random()*(max-min)+min; }
+
+for(let i=0;i<confettiCount;i++){
+  confetti.push({
+    x:random(0,canvas.width),
+    y:random(-canvas.height,0),
+    r:random(5,15),
+    d:random(1,10),
+    color:colors[Math.floor(random(0,colors.length))],
+    tilt:random(-10,10),
+    tiltAngleIncrement:random(0.05,0.12),
+    tiltAngle:0
+  });
+}
+
+function drawConfetti(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(c=>{
+    ctx.beginPath();
+    ctx.lineWidth=c.r/2;
+    ctx.strokeStyle=c.color;
+    ctx.moveTo(c.x+c.tilt+c.r/4,c.y);
+    ctx.lineTo(c.x+c.tilt,c.y+c.tilt+c.r/4);
+    ctx.stroke();
+  });
+  confetti.forEach(c=>{
+    c.tiltAngle+=c.tiltAngleIncrement;
+    c.y+=(Math.cos(c.d)+1+c.r/2)/2;
+    c.tilt=Math.sin(c.tiltAngle)*15;
+    if(c.y>canvas.height){ c.y=-10; c.x=random(0,canvas.width); }
+  });
+  requestAnimationFrame(drawConfetti);
+}
+drawConfetti();
+
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+</script>
+</body>
+</html>
